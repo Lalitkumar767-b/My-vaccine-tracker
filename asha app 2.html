@@ -1,0 +1,133 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HYBC & HBNC Tracker</title>
+  <style>
+    body {
+      background: url('https://www.transparenttextures.com/patterns/diagmonds-light.png'), #d0f0fd;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    .tracker-box {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
+      margin: 0 auto;
+      animation: fadeIn 1s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    h1 {
+      font-size: 26px;
+      margin-bottom: 10px;
+    }
+    select, input[type="date"], button {
+      padding: 10px;
+      margin: 10px 0;
+      width: 90%;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #4db8ff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #3399ff;
+    }
+    #result {
+      margin-top: 20px;
+      text-align: left;
+      font-size: 16px;
+      padding-left: 20px;
+    }
+    #whatsappShare {
+      margin-top: 15px;
+      display: none;
+    }
+    footer {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="tracker-box">
+    <h1>HYBC & HBNC Tracker <span>👶💉</span></h1>
+    <select id="trackerType">
+      <option value="hbnc">HBNC Tracker</option>
+      <option value="hybc">HYBC Tracker</option>
+    </select><br>
+    <input type="date" id="dob" />
+    <button onclick="showVisits()">Show Visits</button>
+    <div id="result"></div>
+    <a id="whatsappShare" href="#" target="_blank">
+      <button style="background-color: #25D366">Share on WhatsApp</button>
+    </a>
+  </div>
+
+  <footer>
+    Designer: Lalit Kumar | Contact: 7302361478
+  </footer>
+
+  <audio id="clickSound">
+    <source src="https://www.fesliyanstudios.com/play-mp3/387" type="audio/mpeg">
+  </audio>
+
+  <script>
+    function showVisits() {
+      const type = document.getElementById("trackerType").value;
+      const dob = new Date(document.getElementById("dob").value);
+      const result = document.getElementById("result");
+      const sound = document.getElementById("clickSound");
+      const whatsappBtn = document.getElementById("whatsappShare");
+      sound.play();
+
+      if (!dob.getTime()) {
+        result.innerHTML = "<p>Please enter a valid date.</p>";
+        whatsappBtn.style.display = "none";
+        return;
+      }
+
+      let visits = [];
+      let message = "";
+      if (type === "hbnc") {
+        const labels = ["Day 1", "Day 3", "Day 7", "Day 14", "Day 21", "Day 28", "Day 42"];
+        const days = [0, 2, 6, 13, 20, 27, 41];
+        visits = days.map((d, i) => {
+          const date = new Date(dob.getTime() + d * 86400000);
+          return `${labels[i]}: ${formatDate(date)}`;
+        });
+      } else {
+        const labels = ["Visit 1", "Visit 2", "Visit 3", "Visit 4", "Visit 5"];
+        visits = labels.map((label, i) => {
+          let visitDate = new Date(dob);
+          visitDate.setMonth(visitDate.getMonth() + (i + 1) * 3);
+          return `${label}: ${formatDate(visitDate)}`;
+        });
+      }
+
+      result.innerHTML = `<ul>${visits.map(v => `<li>${v}</li>`).join('')}</ul>`;
+      message = `HYBC/HBNC Visit Schedule:%0A${visits.map(v => v).join('%0A')}`;
+      whatsappBtn.href = `https://wa.me/?text=${message}`;
+      whatsappBtn.style.display = "inline-block";
+    }
+
+    function formatDate(date) {
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+  </script>
+</body>
+</html>
